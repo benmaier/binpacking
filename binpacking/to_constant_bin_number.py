@@ -2,12 +2,14 @@ from __future__ import print_function
 import numpy as np
 from binpacking import load_csv
 from binpacking import save_csvs
+from binpacking import print_binsizes
 
 def csv_to_constant_bin_number(filepath,weight_column,N_bin,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
 
     data, weight_column, header = load_csv(filepath,weight_column,has_header=has_header,delim=delim,quotechar=quotechar)
 
     bins = to_constant_bin_number(data,N_bin,weight_pos=weight_column,lower_bound=lower_bound,upper_bound=upper_bound)
+    print_binsizes(bins,weight_column)
 
     save_csvs(bins,filepath,header,delim=delim,quotechar=quotechar)
 

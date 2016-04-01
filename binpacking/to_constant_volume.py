@@ -1,12 +1,14 @@
 import numpy as np
 from binpacking import load_csv
 from binpacking import save_csvs
+from binpacking import print_binsizes
 
 def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
 
     data, weight_column, header = load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"')
 
     bins = to_constant_volume(data,V_max,weight_pos=weight_column,lower_bound=lower_bound,upper_bound=upper_bound)
+    print_binsizes(bins,weight_column)
 
     save_csvs(bins,filepath,header,delim=delim,quotechar=quotechar)
 
