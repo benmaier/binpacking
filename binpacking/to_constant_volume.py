@@ -1,8 +1,55 @@
 import numpy as np
+from binpacking import load_csv
+from binpacking import save_csvs
 
-def to_constant_volume(d,V_max,lower_bound=None,upper_bound=None):
-    
+def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
+
+    data, weight_column, header = load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"')
+
+    bins = to_constant_volume(data,V_max,weight_pos=weight_column,lower_bound=lower_bound,upper_bound=upper_bound)
+
+    save_csvs(bins,filepath,delim=delim,quotechar=quotechar)
+
+
+def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None):
+    '''
+    Distributes a list of weights, a dictionary of weights or a list of tuples containing weights
+    to a minimal number of bins which have a fixed volume.
+    INPUT:
+    --- d: list containing weights, 
+           OR dictionary where each (key,value)-pair carries the weight as value,
+           OR list of tuples where one entry in the tuple is the weight. The position of 
+              this weight has to be given in optional variable weight_pos
+         
+    optional:
+    ~~~ weight_pos: int -- if d is a list of tuples, this integer number gives the position of the weight in a tuple
+    ~~~ lower_bound: weights under this bound are not considered
+    ~~~ upper_bound: weights exceeding this bound are not considered
+    '''
+
+    #define functions for the applying the bounds
+    if lower_bound is not None and upper_bound is not None and lower_bound<upper_bound:
+        get_valid_weight_ndcs = lambda a: np.nonzero(np.logical_and(a>lower_bound,a<upper_bound))[0]
+    elif lower_bound is not None:
+        get_valid_weight_ndcs = lambda a: np.nonzero(a>lower_bound)[0]
+    elif upper_bound is not None:
+        get_valid_weight_ndcs = lambda a: np.nonzero(a<upper_bound)[0]
+    elif lower_bound is None and upper_bound is None:
+        get_valid_weight_ndcs = lambda a: np.arange(len(a),dtype=int)
+    elif lower_bound>=upper_bound:
+        raise Exception("lower_bound is greater or equal to upper_bound")
+
     isdict = isinstance(d,dict)
+    is_tuple_list = not isdict and hasattr(d[0],'__len__')
+
+    if is_tuple_list:
+        if weight_pos is not None:
+
+            new_dict = { i: tup for i,tup in enumerate(d) }
+            d = { i: tup[weight_pos] for i,tup in enumerate(d) }
+            isdict = True
+        else:
+            raise Exception("no weight axis provided for tuple list")
 
     if isdict:
 
@@ -21,6 +68,13 @@ def to_constant_volume(d,V_max,lower_bound=None,upper_bound=None):
     else:
         weights = np.sort(np.array(d))[::-1]
         bins = [ [] ]
+
+    #find the valid indices
+    valid_ndcs = get_valid_weight_ndcs(weights)
+    weights = weights[valid_ndcs]
+
+    if isdict:
+        keys = keys[valid_ndcs]
 
     #the total volume is the sum of all weights
     V_total = weights.sum()
@@ -60,7 +114,15 @@ def to_constant_volume(d,V_max,lower_bound=None,upper_bound=None):
         #next item 
         weight_sum[b] += weight
 
-    return bins
+    if not is_tuple_list:
+        return bins
+    else:
+        new_bins = []
+        for b in len(bins):
+            new_bins.append([])
+            for key in bins[b]:
+                new_bins[b].append(new_dict[key])
+        return new_bins
 
          
 if __name__=="__main__":
