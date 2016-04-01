@@ -9,7 +9,7 @@ def csv_to_constant_bin_number(filepath,weight_column,N_bin,has_header=False,del
 
     bins = to_constant_bin_number(data,N_bin,weight_pos=weight_column,lower_bound=lower_bound,upper_bound=upper_bound)
 
-    save_csvs(bins,filepath,delim=delim,quotechar=quotechar)
+    save_csvs(bins,filepath,header,delim=delim,quotechar=quotechar)
 
 
 def to_constant_bin_number(d,N_bin,weight_pos=None,lower_bound=None,upper_bound=None):

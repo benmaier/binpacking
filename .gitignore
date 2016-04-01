@@ -4,6 +4,7 @@
 # Setuptools distribution folder.
 /dist/
 /build/
+/bin/
 
 # for testing
 /test/

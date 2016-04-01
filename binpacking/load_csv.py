@@ -13,20 +13,22 @@ def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
         for row in reader:
 
             if row_count>0:
-                data.extend(row)
+                row[weight_column] = float(row[weight_column])
+                data.append(row)
             elif has_header:
                 header = row
+                if isinstance(weight_column,basestring):
+                    if has_header:
+                        if weight_column in header:
+                            weight_column = header.index(weight_column)
+                        else:
+                            raise Exception("weight key "+weight_column+" not found in header")
+            else:
+                if isinstance(weight_column,basestring):
+                    raise Exception("weight key "+weight_column+" useless, since given csv has no header")
 
             row_count += 1
 
-    if isinstance(weight_column,basestring):
-        if has_header:
-            if weight_column in header:
-                weight_column = header.index(weight_column)
-            else:
-                raise Exception("weight key "+weight_key+" not found in header")
-        else:
-            raise Exception("weight key "+weight_key+" useless, since given csv has no header")
 
     return data,weight_column,header
 
