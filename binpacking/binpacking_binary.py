@@ -51,10 +51,10 @@ def main():
         opt["delim"] = '\t'
     
     if opt["V_max"] is None and opt["N_bin"] is None:
-        print "Neither V_max nor N_bin are given. No algorithm to choose"
+        print "Neither V_max nor N_bin are given. No algorithm can be used."
         sys.exit(1)
     elif opt["V_max"] is not None and opt["N_bin"] is not None:
-        print "Both V_max nor N_bin are given. It's unclear which algorithm to choose"
+        print "Both V_max and N_bin are given. It's unclear which algorithm is to be used."
         sys.exit(1)
     elif opt["V_max"] is not None and opt["N_bin"] is None:
         opt.pop("N_bin",None)

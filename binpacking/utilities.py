@@ -37,8 +37,6 @@ def print_binsizes(bins,weight_column):
     formatstr = "%0" + str(len(str(len(bins)-1))) + "d"
     for ib,b in enumerate(bins):
         print formatstr % ib, sum([t[weight_column] for t in b])
-
-
     
 
 def save_csvs(bins,filepath,header,delim=',',quotechar='"'):
