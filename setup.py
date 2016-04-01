@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='binpacking',
-      version='0.1',
+      version='1.0',
       description='Aims at optimal distribution of weighted items to bins (either a fixed number of bins or a fixed number of volume per bin). Data may be in form of list, dictionary, list of tuples or csvfile.',
       url='https://www.github.com/benmaier/binpacking',
       author='Benjamin F. Maier',

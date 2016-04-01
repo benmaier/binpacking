@@ -34,7 +34,7 @@ def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
 
 def print_binsizes(bins,weight_column):
     print "=== distributed items to bins with sizes ==="
-    formatstr = "%0" + str(len(str(len(bins)))) + "d"
+    formatstr = "%0" + str(len(str(len(bins)-1))) + "d"
     for ib,b in enumerate(bins):
         print formatstr % ib, sum([t[weight_column] for t in b])
 
@@ -44,9 +44,7 @@ def print_binsizes(bins,weight_column):
 def save_csvs(bins,filepath,header,delim=',',quotechar='"'):
     filename, file_extension = os.path.splitext(filepath)
 
-    N_bins = len(bins)
-    N_chars = len(str(N_bins))
-    formatstr = "%0" + str(N_chars) + "d"
+    formatstr = "%0" + str(len(str(len(bins)))) + "d"
 
     for ib,b in enumerate(bins):
         current_path = filename + "_" + formatstr % ib + file_extension

@@ -5,7 +5,7 @@ from binpacking import print_binsizes
 
 def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
 
-    data, weight_column, header = load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"')
+    data, weight_column, header = load_csv(filepath,weight_column,has_header=has_header,delim=',',quotechar='"')
 
     bins = to_constant_volume(data,V_max,weight_pos=weight_column,lower_bound=lower_bound,upper_bound=upper_bound)
     print_binsizes(bins,weight_column)
@@ -120,7 +120,7 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
         return bins
     else:
         new_bins = []
-        for b in len(bins):
+        for b in xrange(len(bins)):
             new_bins.append([])
             for key in bins[b]:
                 new_bins[b].append(new_dict[key])
