@@ -8,9 +8,11 @@ setup(name='binpacking',
       author_email='bfmaier@physik.hu-berlin.de',
       license='MIT',
       packages=['binpacking'],
+      setup_requires=['pytest-runner'],
       install_requires=[
-          'numpy', 'future'
+          'numpy', 'future',
       ],
+      tests_require=['pytest', 'pytest-cov'],
       dependency_links=[
           ],
       entry_points = {
