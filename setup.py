@@ -9,7 +9,7 @@ setup(name='binpacking',
       license='MIT',
       packages=['binpacking'],
       install_requires=[
-          'numpy',
+          'numpy', 'future'
       ],
       dependency_links=[
           ],

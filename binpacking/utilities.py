@@ -1,5 +1,8 @@
+from __future__ import print_function
+
 import csv
 import os
+
 
 def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
 
@@ -32,11 +35,12 @@ def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
 
     return data,weight_column,header
 
+
 def print_binsizes(bins,weight_column):
-    print "=== distributed items to bins with sizes ==="
+    print("=== distributed items to bins with sizes ===")
     formatstr = "%0" + str(len(str(len(bins)-1))) + "d"
     for ib,b in enumerate(bins):
-        print formatstr % ib, sum([t[weight_column] for t in b])
+        print(formatstr % ib, sum([t[weight_column] for t in b]))
     
 
 def save_csvs(bins,filepath,header,delim=',',quotechar='"'):

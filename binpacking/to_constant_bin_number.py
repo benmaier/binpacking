@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import range
+
 from binpacking.utilities import load_csv, save_csvs, print_binsizes
 
 import numpy as np
@@ -67,10 +69,10 @@ def to_constant_bin_number(d,N_bin,weight_pos=None,lower_bound=None,upper_bound=
         weights = vals[ndcs]
         keys = keys[ndcs]
 
-        bins = [ {} for i in xrange(N_bin) ]
+        bins = [ {} for i in range(N_bin) ]
     else:
         weights = np.sort(np.array(d))[::-1]
-        bins = [ [] for i in xrange(N_bin) ]
+        bins = [ [] for i in range(N_bin) ]
 
     #find the valid indices
     valid_ndcs = get_valid_weight_ndcs(weights)
@@ -127,7 +129,7 @@ def to_constant_bin_number(d,N_bin,weight_pos=None,lower_bound=None,upper_bound=
         return bins
     else:
         new_bins = []
-        for b in xrange(N_bin):
+        for b in range(N_bin):
             new_bins.append([])
             for key in bins[b]:
                 new_bins[b].append(new_dict[key])
