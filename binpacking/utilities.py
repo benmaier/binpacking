@@ -2,6 +2,8 @@ from __future__ import print_function
 
 import csv
 import os
+from builtins import str
+from past.builtins import basestring
 
 
 def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
