@@ -1,4 +1,6 @@
-from binpacking import *
+
+from binpacking.to_constant_bin_number import csv_to_constant_bin_number
+from binpacking.to_constant_volume import csv_to_constant_volume
 from optparse import OptionParser
 import sys
 

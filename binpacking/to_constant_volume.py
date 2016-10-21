@@ -1,7 +1,6 @@
+from binpacking.utilities import load_csv, save_csvs, print_binsizes
+
 import numpy as np
-from binpacking import load_csv
-from binpacking import save_csvs
-from binpacking import print_binsizes
 
 def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
 
