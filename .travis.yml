@@ -1,0 +1,24 @@
+language: python
+dist: trusty
+
+script:
+    - python setup.py test
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+after_success:
+- coveralls
+
+branches:
+  except:
+    - gh-pages
+
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6-dev"

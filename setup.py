@@ -8,9 +8,11 @@ setup(name='binpacking',
       author_email='bfmaier@physik.hu-berlin.de',
       license='MIT',
       packages=['binpacking'],
+      setup_requires=['pytest-runner'],
       install_requires=[
-          'numpy',
+          'numpy', 'future',
       ],
+      tests_require=['pytest', 'pytest-cov'],
       dependency_links=[
           ],
       entry_points = {
@@ -18,4 +20,10 @@ setup(name='binpacking',
                     'binpacking = binpacking.binpacking_binary:main',
                 ],
             },
+      classifiers=['License :: OSI Approved :: MIT License',
+                   'Programming Language :: Python :: 2.7',
+                   'Programming Language :: Python :: 3.3',
+                   'Programming Language :: Python :: 3.4',
+                   'Programming Language :: Python :: 3.5',
+                   'Programming Language :: Python :: 3.6'],
       zip_safe=False)

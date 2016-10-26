@@ -1,7 +1,9 @@
+from __future__ import print_function
+from builtins import range
+
+from binpacking.utilities import load_csv, save_csvs, print_binsizes
+
 import numpy as np
-from binpacking import load_csv
-from binpacking import save_csvs
-from binpacking import print_binsizes
 
 def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim=',',quotechar='"',lower_bound=None,upper_bound=None):
 
@@ -120,7 +122,7 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
         return bins
     else:
         new_bins = []
-        for b in xrange(len(bins)):
+        for b in range(len(bins)):
             new_bins.append([])
             for key in bins[b]:
                 new_bins[b].append(new_dict[key])
@@ -136,8 +138,8 @@ if __name__=="__main__":
 
     a = np.sort(a)[::-1]
     print(a[:10])
-    print [ np.sum(b) for b in bins ]
-    print a.sum(), sum([ np.sum(b) for b in bins ])
+    print([ np.sum(b) for b in bins ])
+    print(a.sum(), sum([ np.sum(b) for b in bins ]))
 
     w = [ np.sum(b) for b in bins ]
 
@@ -150,6 +152,6 @@ if __name__=="__main__":
     V_max = max(b.values())
 
     bins = to_constant_volume(b,V_max)
-    print bins
+    print_binsizes(bins)
 
 
