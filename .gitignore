@@ -5,6 +5,7 @@
 /dist/
 /build/
 /bin/
+/.eggs/
 
 # for testing
 /test/
