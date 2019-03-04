@@ -84,7 +84,7 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
     V_total = weights.sum()
 
     #prepare array containing the current weight of the bins
-    weight_sum = [ 0. ]
+    weight_sum = np.array([ 0. ])
 
     #iterate through the weight list, starting with heaviest
     for item,weight in enumerate(weights):
@@ -92,17 +92,21 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
         if isdict:
             key = keys[item]
 
-        #put next value in bin with lowest weight sum
-        b = np.argmin(weight_sum)
+        #find candidate bins where the weight might fit
+        candidate_bins = np.where(weight_sum+weight <= V_max)[0]
 
-        #calculate new weight of this bin
-        new_weight_sum = weight_sum[b] + weight
+        # if there are candidates where it fits
+        if len(candidate_bins)>0:
 
-        #if this weight doesn't fit in the bin
-        if new_weight_sum > V_max:
+            # find the fullest bin where this item fits and assign it
+            candidate_index = np.argmax(weight_sum[candidate_bins])
+            b = candidate_bins[candidate_index]
+
+        #if this weight doesn't fit in any existent bin
+        else:
+            # open a new bin
             b = len(weight_sum)
-            #open new bin
-            weight_sum.append(0.)
+            weight_sum = np.append(weight_sum, 0.)
             if isdict:
                 bins.append({})
             else:
@@ -143,7 +147,7 @@ if __name__=="__main__":
 
     w = [ np.sum(b) for b in bins ]
 
-    import pylab as pl
+    import matplotlib.pyplot as pl
     pl.plot(np.arange(len(w)),w)
     pl.show()
 
@@ -152,6 +156,6 @@ if __name__=="__main__":
     V_max = max(b.values())
 
     bins = to_constant_volume(b,V_max)
-    print_binsizes(bins)
+    print(bins)
 
 
