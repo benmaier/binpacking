@@ -44,7 +44,7 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
         raise Exception("lower_bound is greater or equal to upper_bound")
 
     isdict = isinstance(d,dict)
-    is_tuple_list = not isdict and hasattr(d[0],'__len__')
+    is_tuple_list = (not isdict) and (hasattr(d[0],'__len__'))
 
     if is_tuple_list:
         if weight_pos is not None:
