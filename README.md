@@ -62,13 +62,13 @@ The package provides the command line tool "binpacking" using which one can easi
 
 ## Examples
 
-In the package's folder, do
+In the repository's directory
 
     cd examples/
     binpacking -f hamlet_word_count.csv -V 2000 -H -c count -l 10 -u 1000
     binpacking -f hamlet_word_count.csv -N 4 -H -c count 
 
-or in python, do 
+in Python
 
 ```python
 import binpacking

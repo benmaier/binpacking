@@ -81,7 +81,7 @@ Install
 
 .. code:: bash
 
-    pip install binpacking
+    $ pip install binpacking
 
 Examples
 --------
@@ -94,7 +94,7 @@ In the repository's directory
     binpacking -f hamlet_word_count.csv -V 2000 -H -c count -l 10 -u 1000
     binpacking -f hamlet_word_count.csv -N 4 -H -c count 
 
-or in Python
+in Python
 
 .. code:: python
 
