@@ -107,7 +107,7 @@ def to_constant_bin_number(d,N_bin,weight_pos=None,lower_bound=None,upper_bound=
         while not found_bin:
 
             #if this weight fits in the bin
-            if new_weight_sum < V_bin_max:
+            if new_weight_sum <= V_bin_max:
 
                 #...put it in 
                 if isdict:
