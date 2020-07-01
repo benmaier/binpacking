@@ -15,7 +15,7 @@ def csv_to_constant_volume(filepath,weight_column,V_max,has_header=False,delim='
     save_csvs(bins,filepath,header,delim=delim,quotechar=quotechar)
 
 
-def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None):
+def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_bound=None):
     '''
     Distributes a list of weights, a dictionary of weights or a list of tuples containing weights
     to a minimal number of bins which have a fixed volume.
@@ -27,6 +27,7 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
          
     optional:
     ~~~ weight_pos: int -- if d is a list of tuples, this integer number gives the position of the weight in a tuple
+    ~~~ key: function -- if d is a list, this key functions grabs the weight for an item
     ~~~ lower_bound: weights under this bound are not considered
     ~~~ upper_bound: weights exceeding this bound are not considered
     '''
@@ -44,16 +45,21 @@ def to_constant_volume(d,V_max,weight_pos=None,lower_bound=None,upper_bound=None
         raise Exception("lower_bound is greater or equal to upper_bound")
 
     isdict = isinstance(d,dict)
-    is_tuple_list = (not isdict) and (hasattr(d[0],'__len__'))
 
-    if is_tuple_list:
+    if isinstance(d, list) and hasattr(d[0], '__len__'):
         if weight_pos is not None:
-
-            new_dict = { i: tup for i,tup in enumerate(d) }
-            d = { i: tup[weight_pos] for i,tup in enumerate(d) }
-            isdict = True
-        else:
-            raise Exception("no weight axis provided for tuple list")
+            key = lambda x: x[weight_pos]
+        if key is None:
+            raise ValueError("Must provide weight_pos or key for tuple list")
+    
+    if isinstance(d, list) and key:
+        new_dict = {i: val for i, val in enumerate(d)}
+        print(new_dict)
+        d = {i: key(val) for i, val in enumerate(d)}
+        isdict = True
+        is_tuple_list = True
+    else:
+        is_tuple_list = False
 
     if isdict:
 
