@@ -54,7 +54,6 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
     
     if isinstance(d, list) and key:
         new_dict = {i: val for i, val in enumerate(d)}
-        print(new_dict)
         d = {i: key(val) for i, val in enumerate(d)}
         isdict = True
         is_tuple_list = True
