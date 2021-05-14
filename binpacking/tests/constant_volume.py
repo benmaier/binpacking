@@ -30,3 +30,8 @@ def test_key_func():
         for item in bin_:
             assert 'x' in item
             assert 'y' in item
+
+def test_no_fit():
+    values = [42, 24]
+    bins = to_constant_volume(values, 20)
+    assert bins == [[42], [24]]

@@ -20,11 +20,11 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
     Distributes a list of weights, a dictionary of weights or a list of tuples containing weights
     to a minimal number of bins which have a fixed volume.
     INPUT:
-    --- d: list containing weights, 
+    --- d: list containing weights,
            OR dictionary where each (key,value)-pair carries the weight as value,
-           OR list of tuples where one entry in the tuple is the weight. The position of 
+           OR list of tuples where one entry in the tuple is the weight. The position of
               this weight has to be given in optional variable weight_pos
-         
+
     optional:
     ~~~ weight_pos: int -- if d is a list of tuples, this integer number gives the position of the weight in a tuple
     ~~~ key: function -- if d is a list, this key functions grabs the weight for an item
@@ -51,7 +51,7 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
             key = lambda x: x[weight_pos]
         if key is None:
             raise ValueError("Must provide weight_pos or key for tuple list")
-    
+
     if isinstance(d, list) and key:
         new_dict = {i: val for i, val in enumerate(d)}
         d = {i: key(val) for i, val in enumerate(d)}
@@ -93,7 +93,7 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
 
     #iterate through the weight list, starting with heaviest
     for item,weight in enumerate(weights):
-        
+
         if isdict:
             key = keys[item]
 
@@ -108,7 +108,10 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
             b = candidate_bins[candidate_index]
 
         #if this weight doesn't fit in any existent bin
-        else:
+        elif item > 0:
+            # note! if this is the very first item then there is already an
+            # empty bin open so we don't need to open another one.
+
             # open a new bin
             b = len(weight_sum)
             weight_sum = np.append(weight_sum, 0.)
@@ -117,14 +120,18 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
             else:
                 bins.append([])
 
-        #put it in 
+        # if we are at the very first item, use the empty bin already open
+        else:
+            b = 0
+
+        #put it in
         if isdict:
             bins[b][key] = weight
         else:
             bins[b].append(weight)
 
         #increase weight sum of the bin and continue with
-        #next item 
+        #next item
         weight_sum[b] += weight
 
     if not is_tuple_list:
@@ -137,7 +144,7 @@ def to_constant_volume(d,V_max,weight_pos=None,key=None,lower_bound=None,upper_b
                 new_bins[b].append(new_dict[key])
         return new_bins
 
-         
+
 if __name__=="__main__":
 
     a = np.random.power(0.01,size=10000)
