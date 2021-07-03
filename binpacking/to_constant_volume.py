@@ -229,6 +229,13 @@ if __name__=="__main__":
     bins = to_constant_volume(b,V_max)
     print(bins)
 
+    import time
+    start = time.time()
+    for i in range(100):
+        bins = to_constant_volume(a,V_max)
+    end = time.time()
+    print("needed", end-start, "sec")
+
 
     c = [ ('a', 10, 'foo'), ('b', 10, 'log'), ('c', 11), ('d', 1, 'bar'), ('e', 2, 'bommel'), ('f',7,'floggo') ]
     V_max = max(c,key=lambda x:x[1])[1]
@@ -243,4 +250,5 @@ if __name__=="__main__":
         bins = to_constant_volume(a,V_max)
     end = time.time()
     print("needed", end-start, "sec")
+
     pl.show()
