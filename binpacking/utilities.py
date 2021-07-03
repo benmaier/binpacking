@@ -57,3 +57,18 @@ def save_csvs(bins,filepath,header,delim=',',quotechar='"'):
                 writer.writerow(header)
             for row in b:
                 writer.writerow(row)
+
+def get(lst,ndx):
+    return [lst[n] for n in ndx]
+
+def argmin(lst):
+    return min(range(len(lst)), key=lst.__getitem__)
+
+def argmax(lst):
+    return max(range(len(lst)), key=lst.__getitem__)
+
+def argsort(lst):
+    return sorted(range(len(lst)), key=lst.__getitem__)
+
+def revargsort(lst):
+    return sorted(range(len(lst)), key=lambda i: -lst[i])
