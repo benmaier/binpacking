@@ -69,7 +69,7 @@ def to_constant_volume(d,
         OR dictionary where each (key,value)-pair carries the weight as value,
         OR list of tuples where one entry in the tuple is the weight. The position of
         this weight has to be given in optional variable weight_pos
-    V_max : float
+    V_max : int or float
         Fixed bin volume
     weight_pos : int, default = None
         if d is a list of tuples, this integer number gives the position of the weight in a tuple
