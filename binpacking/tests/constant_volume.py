@@ -42,24 +42,37 @@ def test_bounds_and_tuples():
     V_max = 11
 
     bins = to_constant_volume(c,V_max,weight_pos=1,upper_bound=11)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('a', 10, 'foo'), ('d', 1, 'bar')],
-                        [('b', 10, 'log')], [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                        [('b', 10, 'log')],
+                        [
+                            ('e', 2, 'bommel'),
+                            ('f', 7, 'floggo'),
+                        ],
                     ]
 
     bins = to_constant_volume(c,V_max,weight_pos=1,lower_bound=1)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('c', 11,)],
                         [('a', 10, 'foo')],
                         [('b', 10, 'log')],
-                        [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                        [
+                            ('e', 2, 'bommel'),
+                            ('f', 7, 'floggo'),
+                        ],
                     ]
 
     bins = to_constant_volume(c,V_max,weight_pos=1,lower_bound=1,upper_bound=11)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('a', 10, 'foo')],
                         [('b', 10, 'log')],
-                        [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                        [
+                            ('e', 2, 'bommel'),
+                            ('f', 7, 'floggo'),
+                        ],
                     ]
 
 

@@ -36,22 +36,31 @@ def test_bounds_and_tuples():
     N_bin = 4
 
     bins = to_constant_bin_number(c,N_bin,weight_pos=1,upper_bound=11)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('a', 10, 'foo')],
                         [('b', 10, 'log')],
                         [('f', 7, 'floggo')],
-                        [('e', 2, 'bommel'), ('d', 1, 'bar')]
+                        [
+                            ('d', 1, 'bar'),
+                            ('e', 2, 'bommel'),
+                        ]
                     ]
 
     bins = to_constant_bin_number(c,N_bin,weight_pos=1,lower_bound=1)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('c', 11,)],
                         [('a', 10, 'foo')],
                         [('b', 10, 'log')],
-                        [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                        [
+                            ('e', 2, 'bommel'),
+                            ('f', 7, 'floggo'),
+                        ],
                     ]
 
     bins = to_constant_bin_number(c,N_bin,weight_pos=1,lower_bound=1,upper_bound=11)
+    bins = [ sorted(_bin, key=lambda x:x[0]) for _bin in bins ]
     assert bins == [
                         [('a', 10, 'foo')],
                         [('b', 10, 'log')],
