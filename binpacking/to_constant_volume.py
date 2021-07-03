@@ -237,4 +237,10 @@ if __name__=="__main__":
     print(bins)
 
 
+    import time
+    start = time.time()
+    for i in range(100):
+        bins = to_constant_volume(a,V_max)
+    end = time.time()
+    print("needed", end-start, "sec")
     pl.show()
