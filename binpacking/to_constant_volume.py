@@ -161,7 +161,6 @@ if __name__=="__main__":
 
     import matplotlib.pyplot as pl
     pl.plot(np.arange(len(w)),w)
-    pl.show()
 
 
     b = { 'a': 10, 'b': 10, 'c':11, 'd':1, 'e': 2,'f':7 }
@@ -170,4 +169,12 @@ if __name__=="__main__":
     bins = to_constant_volume(b,V_max)
     print(bins)
 
+    import time
+    start = time.time()
+    for i in range(100):
+        bins = to_constant_volume(a,V_max)
+    end = time.time()
+    print("needed", end-start, "sec")
 
+
+    pl.show()
