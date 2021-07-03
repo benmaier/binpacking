@@ -35,3 +35,34 @@ def test_no_fit():
     values = [42, 24]
     bins = to_constant_volume(values, 20)
     assert bins == [[42], [24]]
+
+
+def test_bounds_and_tuples():
+    c = [ ('a', 10, 'foo'), ('b', 10, 'log'), ('c', 11), ('d', 1, 'bar'), ('e', 2, 'bommel'), ('f',7,'floggo') ]
+    V_max = 11
+
+    bins = to_constant_volume(c,V_max,weight_pos=1,upper_bound=11)
+    assert bins == [
+                        [('a', 10, 'foo'), ('d', 1, 'bar')],
+                        [('b', 10, 'log')], [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                    ]
+
+    bins = to_constant_volume(c,V_max,weight_pos=1,lower_bound=1)
+    assert bins == [
+                        [('c', 11,)],
+                        [('a', 10, 'foo')],
+                        [('b', 10, 'log')],
+                        [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                    ]
+
+    bins = to_constant_volume(c,V_max,weight_pos=1,lower_bound=1,upper_bound=11)
+    assert bins == [
+                        [('a', 10, 'foo')],
+                        [('b', 10, 'log')],
+                        [('f', 7, 'floggo'), ('e', 2, 'bommel')],
+                    ]
+
+
+
+if __name__=="__main__":
+    test_bounds_and_tuples()
