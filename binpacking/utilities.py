@@ -26,7 +26,7 @@ def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
                 header = row
                 if weight_column in header:
                     weight_column = header.index(weight_column)
-                else:
+                elif weight_col_is_str:
                     raise Exception("weight key "+weight_column+" not found in header")
             else:
                 row[weight_column] = float(row[weight_column])
