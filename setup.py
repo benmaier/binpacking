@@ -8,7 +8,6 @@ setup(name='binpacking',
       author_email='bfmaier@physik.hu-berlin.de',
       license='MIT',
       packages=['binpacking'],
-      setup_requires=['pytest-runner'],
       install_requires=[
           'future',
       ],
