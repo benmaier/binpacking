@@ -82,3 +82,8 @@ bins = binpacking.to_constant_volume(b,11)
 print("===== list\n",b,"\n",bins)
 
 ```
+
+## Related packages
+
+* [prtpy](https://github.com/erelsgl/prtpy) by Erel Segal-Halevi.
+* [numberpartitioning](https://github.com/fuglede/numberpartitioning) by Søren Fuglede Jørgensen.
