@@ -49,7 +49,16 @@ def print_bin(bins):
     for i,bin in enumerate(bins):
         print(f"\n= bin {i} =")
         for entry in bin:
-            print(f"{entry[0]};{entry[1]};{entry[2]};{entry[3]}")
+            printstr = ""
+
+            itr = iter(entry)
+            *_, last = itr
+
+            for value in entry:
+                printstr += str(value)
+                if value is not last:
+                    printstr += ';'
+            print(printstr)
 
     print(f"\ntotal count of bins: {len(bins)}")
 
