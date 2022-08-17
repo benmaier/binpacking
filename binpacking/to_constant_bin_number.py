@@ -108,7 +108,7 @@ def to_constant_bin_number(d,
         is_tuple_list = False
 
     if isdict:
-
+                        
         #get keys and values (weights)
         keys_vals = d.items()
         keys = [ k for k, v in keys_vals ]
