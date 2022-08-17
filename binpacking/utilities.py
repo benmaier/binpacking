@@ -43,6 +43,15 @@ def print_binsizes(bins,weight_column):
     formatstr = "%0" + str(len(str(len(bins)-1))) + "d"
     for ib,b in enumerate(bins):
         print(formatstr % ib, sum([t[weight_column] for t in b]))
+        
+def print_bin(bins):
+    print("=== items distributed over bins ===")
+    for i,bin in enumerate(bins):
+        print(f"\n= bin {i} =")
+        for entry in bin:
+            print(f"{entry[0]};{entry[1]};{entry[2]};{entry[3]}")
+
+    print(f"\ntotal count of bins: {len(bins)}")
 
 def save_csvs(bins,filepath,header,delim=',',quotechar='"'):
     filename, file_extension = os.path.splitext(filepath)
