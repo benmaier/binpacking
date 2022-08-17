@@ -5,6 +5,7 @@ from binpacking.utilities import (
             load_csv,
             save_csvs,
             print_binsizes,
+            print_bin,
             get,
             argmax,
             revargsort,
@@ -42,6 +43,7 @@ def csv_to_constant_volume(filepath,
                               )
 
     print_binsizes(bins, weight_column)
+    print_bin(bins)
 
     save_csvs(bins,
               filepath,
