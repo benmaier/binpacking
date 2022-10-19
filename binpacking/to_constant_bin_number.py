@@ -1,15 +1,17 @@
 from __future__ import print_function
+
 from builtins import range
 
 from binpacking.utilities import (
-            load_csv,
-            save_csvs,
-            print_binsizes,
-            print_bin,
-            get,
-            argmin,
-            revargsort,
-        )
+    load_csv,
+    save_csvs,
+    print_binsizes,
+    print_bin,
+    get,
+    argmin,
+    revargsort,
+)
+
 
 def csv_to_constant_bin_number(filepath,
                                weight_column,
@@ -19,7 +21,8 @@ def csv_to_constant_bin_number(filepath,
                                quotechar='"',
                                lower_bound=None,
                                upper_bound=None,
-                              ):
+                               print_bins=False
+                               ):
     """
     Load a csv file, binpack the rows according to one of the columns
     to a constant number of bins.
@@ -42,7 +45,9 @@ def csv_to_constant_bin_number(filepath,
                                   )
 
     print_binsizes(bins, weight_column)
-    print_bin(bins)
+
+    if print_bins:
+        print_bin(bins)
 
     save_csvs(bins,
               filepath,
@@ -58,7 +63,7 @@ def to_constant_bin_number(d,
                            key=None,
                            lower_bound=None,
                            upper_bound=None,
-                       ):
+                           ):
     """
     Distributes a list of weights, a dictionary of weights or a list of tuples containing weights
     to a fixed number of bins while trying to keep the weight distribution constant.
@@ -88,9 +93,9 @@ def to_constant_bin_number(d,
         a dict of items, depending on the type of ``d``.
     """
 
-    isdict = isinstance(d,dict)
+    isdict = isinstance(d, dict)
 
-    if not hasattr(d,'__len__'):
+    if not hasattr(d, '__len__'):
         raise TypeError("d must be iterable")
 
     if not isdict and hasattr(d[0], '__len__'):
@@ -108,33 +113,33 @@ def to_constant_bin_number(d,
         is_tuple_list = False
 
     if isdict:
-                        
-        #get keys and values (weights)
-        keys_vals = d.items()
-        keys = [ k for k, v in keys_vals ]
-        vals = [ v for k, v in keys_vals ]
 
-        #sort weights decreasingly
+        # get keys and values (weights)
+        keys_vals = d.items()
+        keys = [k for k, v in keys_vals]
+        vals = [v for k, v in keys_vals]
+
+        # sort weights decreasingly
         ndcs = revargsort(vals)
 
         weights = get(vals, ndcs)
         keys = get(keys, ndcs)
 
-        bins = [ {} for i in range(N_bin) ]
+        bins = [{} for i in range(N_bin)]
     else:
-        weights = sorted(d,key=lambda x: -x)
-        bins = [ [] for i in range(N_bin) ]
+        weights = sorted(d, key=lambda x: -x)
+        bins = [[] for i in range(N_bin)]
 
-    #find the valid indices
-    if lower_bound is not None and upper_bound is not None and lower_bound<upper_bound:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i] < upper_bound,range(len(weights)))
+    # find the valid indices
+    if lower_bound is not None and upper_bound is not None and lower_bound < upper_bound:
+        valid_ndcs = filter(lambda i: lower_bound < weights[i] < upper_bound, range(len(weights)))
     elif lower_bound is not None:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i],range(len(weights)))
+        valid_ndcs = filter(lambda i: lower_bound < weights[i], range(len(weights)))
     elif upper_bound is not None:
-        valid_ndcs = filter(lambda i: weights[i] < upper_bound,range(len(weights)))
+        valid_ndcs = filter(lambda i: weights[i] < upper_bound, range(len(weights)))
     elif lower_bound is None and upper_bound is None:
         valid_ndcs = range(len(weights))
-    elif lower_bound>=upper_bound:
+    elif lower_bound >= upper_bound:
         raise Exception("lower_bound is greater or equal to upper_bound")
 
     valid_ndcs = list(valid_ndcs)
@@ -144,48 +149,48 @@ def to_constant_bin_number(d,
     if isdict:
         keys = get(keys, valid_ndcs)
 
-    #the total volume is the sum of all weights
+    # the total volume is the sum of all weights
     V_total = sum(weights)
 
-    #the first estimate of the maximum bin volume is 
-    #the total volume divided to all bins
+    # the first estimate of the maximum bin volume is
+    # the total volume divided to all bins
     V_bin_max = V_total / float(N_bin)
 
-    #prepare array containing the current weight of the bins
-    weight_sum = [0. for n in range(N_bin) ]
+    # prepare array containing the current weight of the bins
+    weight_sum = [0. for n in range(N_bin)]
 
-    #iterate through the weight list, starting with heaviest
+    # iterate through the weight list, starting with heaviest
     for item, weight in enumerate(weights):
 
         if isdict:
             key = keys[item]
 
-        #put next value in bin with lowest weight sum
+        # put next value in bin with lowest weight sum
         b = argmin(weight_sum)
 
-        #calculate new weight of this bin
+        # calculate new weight of this bin
         new_weight_sum = weight_sum[b] + weight
 
         found_bin = False
         while not found_bin:
 
-            #if this weight fits in the bin
+            # if this weight fits in the bin
             if new_weight_sum <= V_bin_max:
 
-                #...put it in 
+                # ...put it in
                 if isdict:
                     bins[b][key] = weight
                 else:
                     bins[b].append(weight)
 
-                #increase weight sum of the bin and continue with
-                #next item 
+                # increase weight sum of the bin and continue with
+                # next item
                 weight_sum[b] = new_weight_sum
                 found_bin = True
 
             else:
-                #if not, increase the max volume by the sum of
-                #the rest of the bins per bin
+                # if not, increase the max volume by the sum of
+                # the rest of the bins per bin
                 V_bin_max += sum(weights[item:]) / float(N_bin)
 
     if not is_tuple_list:
@@ -198,33 +203,33 @@ def to_constant_bin_number(d,
                 new_bins[b].append(new_dict[key])
         return new_bins
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     import pylab as pl
     import numpy as np
 
-    a = np.random.power(0.01,size=1000)
+    a = np.random.power(0.01, size=1000)
     N_bin = 9
 
-    bins = to_constant_bin_number(a,N_bin)
+    bins = to_constant_bin_number(a, N_bin)
     weight_sums = [np.sum(b) for b in bins]
 
-    #show max values of a and weight sums of the bins
-    print(np.sort(a)[-1:-11:-1],weight_sums)
+    # show max values of a and weight sums of the bins
+    print(np.sort(a)[-1:-11:-1], weight_sums)
 
-    #plot distribution
-    pl.plot(np.arange(N_bin),[np.sum(b) for b in bins])
-    pl.ylim([0,max([np.sum(b) for b in bins])+0.1])
+    # plot distribution
+    pl.plot(np.arange(N_bin), [np.sum(b) for b in bins])
+    pl.ylim([0, max([np.sum(b) for b in bins]) + 0.1])
 
-    b = { 'a': 10, 'b': 10, 'c':11, 'd':1, 'e': 2,'f':7 }
-    bins = to_constant_bin_number(b,4)
-    print("===== dict\n",b,"\n",bins)
+    b = {'a': 10, 'b': 10, 'c': 11, 'd': 1, 'e': 2, 'f': 7}
+    bins = to_constant_bin_number(b, 4)
+    print("===== dict\n", b, "\n", bins)
 
     lower_bound = None
     upper_bound = None
 
-    b = [ ('a', 10), ('b', 10), ('c',11), ('d',1), ('e', 2),('f',7,'foo') ]
-    bins = to_constant_bin_number(b,4,weight_pos=1,lower_bound=lower_bound,upper_bound=upper_bound)
-    print("===== list of tuples\n",b,"\n",bins)
+    b = [('a', 10), ('b', 10), ('c', 11), ('d', 1), ('e', 2), ('f', 7, 'foo')]
+    bins = to_constant_bin_number(b, 4, weight_pos=1, lower_bound=lower_bound, upper_bound=upper_bound)
+    print("===== list of tuples\n", b, "\n", bins)
 
     pl.show()
-

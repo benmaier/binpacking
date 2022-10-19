@@ -1,14 +1,13 @@
 from __future__ import print_function
 
+import sys
+from optparse import OptionParser
+
 from binpacking.to_constant_bin_number import csv_to_constant_bin_number
 from binpacking.to_constant_volume import csv_to_constant_volume
 
-from optparse import OptionParser
-import sys
-
 
 def main():
-
     parser = OptionParser()
     parser.add_option("-f", "--filepath", dest="filepath", default=None,
                       help="path to the csv-file to be bin-packed"
@@ -37,6 +36,9 @@ def main():
     parser.add_option("-u", "--upper-bound", dest="upper_bound", type="float", default=None,
                       help="weights exceeding this bound will not be considered"
                       )
+    parser.add_option("-p", "--print-bins", action="store_true", dest="print_bins", default=False,
+                      help="print sorted bins out to console"
+                      )
 
     (options, args) = parser.parse_args()
     opt = vars(options)
@@ -45,15 +47,15 @@ def main():
         raise Exception("No weight column identifier given")
         sys.exit(1)
     else:
-        #if weight column is given try to convert it to a number
+        # if weight column is given try to convert it to a number
         try:
-            opt["weight_column"] = int(opt["weight_column"])            
+            opt["weight_column"] = int(opt["weight_column"])
         except:
             pass
 
     if opt["delim"] == "tab" or opt["delim"] == '"tab"':
         opt["delim"] = '\t'
-    
+
     if opt["V_max"] is None and opt["N_bin"] is None:
         print("Neither V_max nor N_bin are given. No algorithm can be used.")
         sys.exit(1)
@@ -61,8 +63,8 @@ def main():
         print("Both V_max and N_bin are given. It's unclear which algorithm is to be used.")
         sys.exit(1)
     elif opt["V_max"] is not None and opt["N_bin"] is None:
-        opt.pop("N_bin",None)
+        opt.pop("N_bin", None)
         csv_to_constant_volume(**opt)
     elif opt["V_max"] is None and opt["N_bin"] is not None:
-        opt.pop("V_max",None)
+        opt.pop("V_max", None)
         csv_to_constant_bin_number(**opt)

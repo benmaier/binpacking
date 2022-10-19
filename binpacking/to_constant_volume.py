@@ -1,15 +1,17 @@
 from __future__ import print_function
+
 from builtins import range
 
 from binpacking.utilities import (
-            load_csv,
-            save_csvs,
-            print_binsizes,
-            print_bin,
-            get,
-            argmax,
-            revargsort,
-        )
+    load_csv,
+    save_csvs,
+    print_binsizes,
+    print_bin,
+    get,
+    argmax,
+    revargsort,
+)
+
 
 def csv_to_constant_volume(filepath,
                            weight_column,
@@ -19,6 +21,7 @@ def csv_to_constant_volume(filepath,
                            quotechar='"',
                            lower_bound=None,
                            upper_bound=None,
+                           print_bins=False
                            ):
     """
     Load a csv file, binpack the rows according to one of the columns
@@ -26,7 +29,6 @@ def csv_to_constant_volume(filepath,
     Write a new csv file for each bin, containing
     the corresponding rows.
     """
-
 
     data, weight_column, header = load_csv(filepath,
                                            weight_column,
@@ -43,7 +45,9 @@ def csv_to_constant_volume(filepath,
                               )
 
     print_binsizes(bins, weight_column)
-    print_bin(bins)
+
+    if print_bins:
+        print_bin(bins)
 
     save_csvs(bins,
               filepath,
@@ -59,7 +63,7 @@ def to_constant_volume(d,
                        key=None,
                        lower_bound=None,
                        upper_bound=None,
-                   ):
+                       ):
     """
     Distributes a list of weights, a dictionary of weights or a list of tuples containing weights
     to a minimal number of bins that have a fixed volume.
@@ -89,9 +93,9 @@ def to_constant_volume(d,
         a dict of items, depending on the type of ``d``.
     """
 
-    isdict = isinstance(d,dict)
+    isdict = isinstance(d, dict)
 
-    if not hasattr(d,'__len__'):
+    if not hasattr(d, '__len__'):
         raise TypeError("d must be iterable")
 
     if not isdict and hasattr(d[0], '__len__'):
@@ -110,32 +114,32 @@ def to_constant_volume(d,
 
     if isdict:
 
-        #get keys and values (weights)
+        # get keys and values (weights)
         keys_vals = d.items()
-        keys = [ k for k, v in keys_vals ]
-        vals = [ v for k, v in keys_vals ]
+        keys = [k for k, v in keys_vals]
+        vals = [v for k, v in keys_vals]
 
-        #sort weights decreasingly
+        # sort weights decreasingly
         ndcs = revargsort(vals)
 
         weights = get(vals, ndcs)
         keys = get(keys, ndcs)
 
-        bins = [ {} ]
+        bins = [{}]
     else:
-        weights = sorted(d,key=lambda x:-x)
-        bins = [ [] ]
+        weights = sorted(d, key=lambda x: -x)
+        bins = [[]]
 
-    #find the valid indices
-    if lower_bound is not None and upper_bound is not None and lower_bound<upper_bound:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i] < upper_bound,range(len(weights)))
+    # find the valid indices
+    if lower_bound is not None and upper_bound is not None and lower_bound < upper_bound:
+        valid_ndcs = filter(lambda i: lower_bound < weights[i] < upper_bound, range(len(weights)))
     elif lower_bound is not None:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i],range(len(weights)))
+        valid_ndcs = filter(lambda i: lower_bound < weights[i], range(len(weights)))
     elif upper_bound is not None:
-        valid_ndcs = filter(lambda i: weights[i] < upper_bound,range(len(weights)))
+        valid_ndcs = filter(lambda i: weights[i] < upper_bound, range(len(weights)))
     elif lower_bound is None and upper_bound is None:
         valid_ndcs = range(len(weights))
-    elif lower_bound>=upper_bound:
+    elif lower_bound >= upper_bound:
         raise Exception("lower_bound is greater or equal to upper_bound")
 
     valid_ndcs = list(valid_ndcs)
@@ -145,32 +149,32 @@ def to_constant_volume(d,
     if isdict:
         keys = get(keys, valid_ndcs)
 
-    #the total volume is the sum of all weights
+    # the total volume is the sum of all weights
     V_total = sum(weights)
 
-    #prepare array containing the current weight of the bins
-    weight_sum = [ 0. ]
+    # prepare array containing the current weight of the bins
+    weight_sum = [0.]
 
-    #iterate through the weight list, starting with heaviest
+    # iterate through the weight list, starting with heaviest
     for item, weight in enumerate(weights):
 
         if isdict:
             key = keys[item]
 
-        #find candidate bins where the weight might fit
-        candidate_bins = list(filter(lambda i: weight_sum[i]+weight<=V_max, range(len(weight_sum))))
+        # find candidate bins where the weight might fit
+        candidate_bins = list(filter(lambda i: weight_sum[i] + weight <= V_max, range(len(weight_sum))))
 
         # if there are candidates where it fits
-        if len(candidate_bins)>0:
+        if len(candidate_bins) > 0:
 
             # find the fullest bin where this item fits and assign it
-            candidate_index = argmax(get(weight_sum,candidate_bins))
+            candidate_index = argmax(get(weight_sum, candidate_bins))
             b = candidate_bins[candidate_index]
 
-        #if this weight doesn't fit in any existent bin
+        # if this weight doesn't fit in any existent bin
         elif item > 0:
             # note! if this is the very first item then there is already an
-            # empty bin open so we don't need to open another one.
+            # empty bin open, so we don't need to open another one.
 
             # open a new bin
             b = len(weight_sum)
@@ -184,14 +188,14 @@ def to_constant_volume(d,
         else:
             b = 0
 
-        #put it in
+        # put it in
         if isdict:
             bins[b][key] = weight
         else:
             bins[b].append(weight)
 
-        #increase weight sum of the bin and continue with
-        #next item
+        # increase weight sum of the bin and continue with
+        # next item
         weight_sum[b] += weight
 
     if not is_tuple_list:
@@ -205,52 +209,52 @@ def to_constant_volume(d,
         return new_bins
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
 
     import numpy as np
 
-    a = np.random.power(0.01,size=10000)
+    a = np.random.power(0.01, size=10000)
     V_max = 1.
 
-    bins = to_constant_volume(a,V_max)
+    bins = to_constant_volume(a, V_max)
 
     a = np.sort(a)[::-1]
     print(a[:10])
-    print([ np.sum(b) for b in bins ])
-    print(a.sum(), sum([ np.sum(b) for b in bins ]))
+    print([np.sum(b) for b in bins])
+    print(a.sum(), sum([np.sum(b) for b in bins]))
 
-    w = [ np.sum(b) for b in bins ]
+    w = [np.sum(b) for b in bins]
 
     import matplotlib.pyplot as pl
-    pl.plot(np.arange(len(w)),w)
 
+    pl.plot(np.arange(len(w)), w)
 
-    b = { 'a': 10, 'b': 10, 'c':11, 'd':1, 'e': 2,'f':7 }
+    b = {'a': 10, 'b': 10, 'c': 11, 'd': 1, 'e': 2, 'f': 7}
     V_max = max(b.values())
 
-    bins = to_constant_volume(b,V_max)
+    bins = to_constant_volume(b, V_max)
     print(bins)
 
     import time
+
     start = time.time()
     for i in range(100):
-        bins = to_constant_volume(a,V_max)
+        bins = to_constant_volume(a, V_max)
     end = time.time()
-    print("needed", end-start, "sec")
+    print("needed", end - start, "sec")
 
+    c = [('a', 10, 'foo'), ('b', 10, 'log'), ('c', 11), ('d', 1, 'bar'), ('e', 2, 'bommel'), ('f', 7, 'floggo')]
+    V_max = max(c, key=lambda x: x[1])[1]
 
-    c = [ ('a', 10, 'foo'), ('b', 10, 'log'), ('c', 11), ('d', 1, 'bar'), ('e', 2, 'bommel'), ('f',7,'floggo') ]
-    V_max = max(c,key=lambda x:x[1])[1]
-
-    bins = to_constant_volume(c,V_max,weight_pos=1)
+    bins = to_constant_volume(c, V_max, weight_pos=1)
     print(bins)
 
-
     import time
+
     start = time.time()
     for i in range(100):
-        bins = to_constant_volume(a,V_max)
+        bins = to_constant_volume(a, V_max)
     end = time.time()
-    print("needed", end-start, "sec")
+    print("needed", end - start, "sec")
 
     pl.show()
