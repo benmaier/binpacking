@@ -12,6 +12,9 @@ setup(name='binpacking',
           'future',
       ],
       tests_require=['pytest', 'pytest-cov'],
+      extras_require={
+          'dev': ['pytest', 'pytest-cov'],
+      },
       dependency_links=[
           ],
       entry_points = {

@@ -92,6 +92,13 @@ def to_constant_volume(d,
     if not hasattr(d,'__len__'):
         raise TypeError("d must be iterable")
 
+    # Handle empty input
+    if len(d) == 0:
+        if isdict:
+            return [{}]
+        else:
+            return [[]]
+
     if not isdict and hasattr(d[0], '__len__'):
         if weight_pos is not None:
             key = lambda x: x[weight_pos]
@@ -125,16 +132,18 @@ def to_constant_volume(d,
         bins = [ [] ]
 
     #find the valid indices
-    if lower_bound is not None and upper_bound is not None and lower_bound<upper_bound:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i] < upper_bound,range(len(weights)))
-    elif lower_bound is not None:
-        valid_ndcs = filter(lambda i: lower_bound < weights[i],range(len(weights)))
-    elif upper_bound is not None:
-        valid_ndcs = filter(lambda i: weights[i] < upper_bound,range(len(weights)))
-    elif lower_bound is None and upper_bound is None:
-        valid_ndcs = range(len(weights))
-    elif lower_bound>=upper_bound:
+    # First check for invalid bounds
+    if lower_bound is not None and upper_bound is not None and lower_bound >= upper_bound:
         raise Exception("lower_bound is greater or equal to upper_bound")
+
+    if lower_bound is not None and upper_bound is not None:
+        valid_ndcs = filter(lambda i: lower_bound <= weights[i] <= upper_bound, range(len(weights)))
+    elif lower_bound is not None:
+        valid_ndcs = filter(lambda i: lower_bound <= weights[i], range(len(weights)))
+    elif upper_bound is not None:
+        valid_ndcs = filter(lambda i: weights[i] <= upper_bound, range(len(weights)))
+    else:
+        valid_ndcs = range(len(weights))
 
     valid_ndcs = list(valid_ndcs)
 
