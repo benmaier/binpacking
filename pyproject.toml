@@ -23,6 +23,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
+numpy = ["numpy>=1.20"]
 dev = ["pytest>=7.0", "pytest-cov>=4.0"]
 
 [project.scripts]

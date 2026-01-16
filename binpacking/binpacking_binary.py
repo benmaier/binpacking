@@ -1,9 +1,6 @@
 import argparse
 import sys
 
-from binpacking.to_constant_bin_number import csv_to_constant_bin_number
-from binpacking.to_constant_volume import csv_to_constant_volume
-
 
 def main() -> None:
     """CLI entry point for binpacking."""
@@ -69,9 +66,19 @@ def main() -> None:
         default=None,
         help="weights exceeding this bound will not be considered",
     )
+    parser.add_argument(
+        "--use-numpy",
+        action="store_true",
+        dest="use_numpy",
+        default=False,
+        help="use NumPy-accelerated algorithms (requires numpy to be installed)",
+    )
 
     args = parser.parse_args()
     opt = vars(args)
+
+    # Extract and remove use_numpy flag before passing to algorithm functions
+    use_numpy = opt.pop("use_numpy")
 
     if opt["weight_column"] is None:
         print("No weight column identifier given")
@@ -85,6 +92,17 @@ def main() -> None:
 
     if opt["delim"] == "tab" or opt["delim"] == '"tab"':
         opt["delim"] = '\t'
+
+    # Import the appropriate module based on --use-numpy flag
+    if use_numpy:
+        try:
+            from binpacking.numpy import csv_to_constant_bin_number, csv_to_constant_volume
+        except ImportError:
+            print("NumPy is required for --use-numpy. Install it with: pip install binpacking[numpy]")
+            sys.exit(1)
+    else:
+        from binpacking.to_constant_bin_number import csv_to_constant_bin_number
+        from binpacking.to_constant_volume import csv_to_constant_volume
 
     if opt["V_max"] is None and opt["N_bin"] is None:
         print("Neither V_max nor N_bin are given. No algorithm can be used.")
