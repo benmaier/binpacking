@@ -112,7 +112,7 @@ class TestCliConstantBinNumber:
             '-N', '2',
         )
         assert code == 0
-        assert 'distributed items to bins' in stdout
+        assert 'Bin' in stdout and 'Weight' in stdout
 
         # Cleanup generated files
         base, ext = os.path.splitext(sample_csv_with_header)
@@ -153,7 +153,7 @@ class TestCliConstantVolume:
             '-V', '15',
         )
         assert code == 0
-        assert 'distributed items to bins' in stdout
+        assert 'Bin' in stdout and 'Weight' in stdout
 
         # Cleanup generated files (may be variable number)
         base, ext = os.path.splitext(sample_csv_with_header)

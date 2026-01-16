@@ -197,9 +197,16 @@ class TestPrintBinsizes:
         print_binsizes(bins, weight_column=1)
 
         captured = capsys.readouterr()
-        assert '=== distributed items to bins with sizes ===' in captured.out
-        assert '15' in captured.out  # 10 + 5
-        assert '8' in captured.out
+        # Check header line
+        assert 'Bin' in captured.out
+        assert 'Items' in captured.out
+        assert 'Weight' in captured.out
+        assert '%' in captured.out
+        # Check values
+        assert '15.00' in captured.out  # 10 + 5
+        assert '8.00' in captured.out
+        assert 'Total' in captured.out
+        assert '23.00' in captured.out
 
     def test_empty_bins(self, capsys):
         """Test with empty bins."""
