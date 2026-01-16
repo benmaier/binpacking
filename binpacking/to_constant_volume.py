@@ -1,6 +1,3 @@
-from __future__ import print_function
-from builtins import range
-
 from binpacking.utilities import (
             load_csv,
             save_csvs,

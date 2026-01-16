@@ -1,14 +1,10 @@
-from __future__ import print_function
-
 import csv
 import os
-from builtins import str
-from past.builtins import basestring
 
 
 def load_csv(filepath,weight_column,has_header=False,delim=',',quotechar='"'):
 
-    weight_col_is_str = isinstance(weight_column,basestring)
+    weight_col_is_str = isinstance(weight_column, str)
 
     if weight_col_is_str and not has_header:
         raise Exception("weight key "+weight_column+" useless, since given csv has no header")
