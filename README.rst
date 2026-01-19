@@ -2,109 +2,169 @@ binpacking
 ==========
 
 This package contains greedy algorithms to solve two typical bin packing
-problems, (i) sorting items into a constant number of bins, (ii) sorting
-items into a low number of bins of constant size. Here's a usage example
+problems:
 
-.. code:: python
+1. **Constant bin number**: Distribute items into exactly *N* bins with
+   approximately equal total weight per bin.
+2. **Constant volume**: Distribute items into the minimum number of
+   bins, each with a maximum capacity *V*.
 
-    >>> import binpacking
-    >>>
-    >>> b = { 'a': 10, 'b': 10, 'c':11, 'd':1, 'e': 2,'f':7 }
-    >>> bins = binpacking.to_constant_bin_number(b,4) # 4 being the number of bins
-    >>> print("===== dict\n",b,"\n",bins)
-    ===== dict
-     {'a': 10, 'b': 10, 'c': 11, 'd': 1, 'e': 2, 'f': 7}
-     [{'c': 11}, {'b': 10}, {'a': 10}, {'f': 7, 'e': 2, 'd': 1}]
-    >>>
-    >>> b = list(b.values())
-    >>> bins = binpacking.to_constant_volume(b,11) # 11 being the bin volume
-    >>> print("===== list\n",b,"\n",bins)
-    ===== list
-     [10, 10, 11, 1, 2, 7]
-     [[11], [10], [10], [7, 2, 1]]
+Requirements
+------------
 
-Consider you have a list of items, each carrying a weight *w\_i*.
-Typical questions are
-
-#. How can we distribute the items to a minimum number of bins *N* of
-   equal volume *V*?
-#. How can we distribute the items to exactly *N* bins where each
-   carries items that sum up to approximately equal weight?
-
-Problems like this can easily occur in modern computing. Assume you have
-to run computations where a lot of files of different sizes have to be
-loaded into the memory. However, you only have a machine with 8GB of
-RAM. How should you bind the files such that you have to run your
-program a minimum amount of times? This is equivalent to solving problem
-1.
-
-What about problem 2? Say you have to run a large number of
-computations. For each of the jobs you know the time it will probably
-take to finish. However, you only have a CPU with 4 cores. How should
-you distribute the jobs to the 4 cores such that they will all finish at
-approximately the same time?
-
-The package provides the command line tool "binpacking" using which one
-can easily bin pack csv-files containing a column that can be identified
-with a weight. To see the usage enter
-
-.. code:: bash
-
-    $ binpacking -h
-    Usage: binpacking [options]
-
-    Options:
-      -h, --help            show this help message and exit
-      -f FILEPATH, --filepath=FILEPATH
-                            path to the csv-file to be bin-packed
-      -V V_MAX, --volume=V_MAX
-                            maximum volume per bin (constant volume algorithm will
-                            be used)
-      -N N_BIN, --n-bin=N_BIN
-                            number of bins (constant bin number algorithm will be
-                            used)
-      -c WEIGHT_COLUMN, --weight-column=WEIGHT_COLUMN
-                            integer (or string) giving the column number (or
-                        column name in header) where the weight is stored
-      -H, --has-header      parse this option if there is a header in the csv-file
-      -d DELIM, --delimiter=DELIM
-                            delimiter in the csv-file (use "tab" for tabs)
-      -q QUOTECHAR, --quotechar=QUOTECHAR
-                            quotecharacter in the csv-file
-      -l LOWER_BOUND, --lower-bound=LOWER_BOUND
-                            weights below this bound will not be considered
-      -u UPPER_BOUND, --upper-bound=UPPER_BOUND
-                            weights exceeding this bound will not be considered
+- Python 3.10+
+- No dependencies (NumPy optional for large datasets)
 
 Install
 -------
 
 .. code:: bash
 
-    $ pip install binpacking
+   pip install binpacking
+
+For optional NumPy acceleration:
+
+.. code:: bash
+
+   pip install binpacking[numpy]
+
+Quick Start
+-----------
+
+.. code:: python
+
+   import binpacking
+
+   # Distribute items to 4 bins with balanced weights
+   b = {'a': 10, 'b': 10, 'c': 11, 'd': 1, 'e': 2, 'f': 7}
+   bins = binpacking.to_constant_bin_number(b, 4)
+   print(bins)
+   # [{'c': 11}, {'b': 10}, {'a': 10}, {'f': 7, 'e': 2, 'd': 1}]
+
+   # Distribute items to bins with max volume 11
+   values = [10, 10, 11, 1, 2, 7]
+   bins = binpacking.to_constant_volume(values, 11)
+   print(bins)
+   # [[11], [10], [10], [7, 2, 1]]
+
+Use Cases
+---------
+
+Consider you have a list of items, each carrying a weight *w_i*. Typical
+questions are:
+
+1. How can we distribute the items to a minimum number of bins *N* of
+   equal volume *V*?
+2. How can we distribute the items to exactly *N* bins where each
+   carries items that sum up to approximately equal weight?
+
+**Example 1**: You have files of different sizes to load into memory,
+but only 8GB of RAM. How do you group files to minimize the number of
+program runs? → Use ``to_constant_volume``.
+
+**Example 2**: You have jobs with known durations and a 4-core CPU. How
+do you distribute jobs so all cores finish at approximately the same
+time? → Use ``to_constant_bin_number``.
+
+Input Formats
+-------------
+
+Both algorithms accept:
+
+- **Lists** of weights: ``[10, 10, 11, 1, 2, 7]``
+- **Dictionaries** with weights as values: ``{'a': 10, 'b': 10, ...}``
+- **Lists of tuples** with ``weight_pos`` parameter:
+  ``[('item1', 10), ('item2', 5)]``
+
+Command Line Interface
+----------------------
+
+The ``binpacking`` command processes CSV files:
+
+.. code:: bash
+
+   $ binpacking -h
+   usage: binpacking [-h] [-f FILEPATH] [-V V_MAX] [-N N_BIN] [-c WEIGHT_COLUMN]
+                     [-H] [-d DELIM] [-q QUOTECHAR] [-l LOWER_BOUND]
+                     [-u UPPER_BOUND] [--use-numpy] [-o OUTPUT_DIR]
+
+   Bin-pack CSV rows by weight column
+
+   options:
+     -h, --help            show this help message and exit
+     -f, --filepath        path to the csv-file to be bin-packed
+     -V, --volume          maximum volume per bin (constant volume algorithm)
+     -N, --n-bin           number of bins (constant bin number algorithm)
+     -c, --weight-column   column number or name where the weight is stored
+     -H, --has-header      set if the csv-file has a header row
+     -d, --delimiter       delimiter in the csv-file (use "tab" for tabs)
+     -q, --quotechar       quote character in the csv-file
+     -l, --lower-bound     exclude weights below this bound
+     -u, --upper-bound     exclude weights above this bound
+     --use-numpy           use NumPy-accelerated algorithms
+     -o, --output-dir      output directory (default: current working directory)
 
 Examples
 --------
 
-In the repository's directory
+In the repository's directory:
 
 .. code:: bash
 
-    cd examples/
-    binpacking -f hamlet_word_count.csv -V 2000 -H -c count -l 10 -u 1000
-    binpacking -f hamlet_word_count.csv -N 4 -H -c count 
+   cd examples_and_resources/
 
-in Python
+   # Constant volume: pack words into bins of max weight 2000
+   binpacking -f hamlet_word_count.csv -V 2000 -H -c count -l 10 -u 1000
+
+   # Constant bin number: distribute to exactly 4 bins
+   binpacking -f hamlet_word_count.csv -N 4 -H -c count
+
+   # Output to specific directory
+   binpacking -f hamlet_word_count.csv -N 4 -H -c count -o /tmp/output/
+
+In Python:
 
 .. code:: python
 
-    import binpacking
+   import binpacking
 
-    b = { 'a': 10, 'b': 10, 'c':11, 'd':1, 'e': 2,'f':7 }
-    bins = binpacking.to_constant_bin_number(b,4)
-    print("===== dict\n",b,"\n",bins)
+   b = {'a': 10, 'b': 10, 'c': 11, 'd': 1, 'e': 2, 'f': 7}
+   bins = binpacking.to_constant_bin_number(b, 4)
+   print("===== dict\n", b, "\n", bins)
 
-    b = list(b.values())
-    bins = binpacking.to_constant_volume(b,11)
-    print("===== list\n",b,"\n",bins)
+   b = list(b.values())
+   bins = binpacking.to_constant_volume(b, 11)
+   print("===== list\n", b, "\n", bins)
 
+NumPy Acceleration
+------------------
+
+For large datasets, use the NumPy-accelerated versions:
+
+.. code:: python
+
+   from binpacking.numpy import to_constant_volume, to_constant_bin_number
+
+   bins = to_constant_volume(large_list, V_max)
+   bins = to_constant_bin_number(large_list, N_bin)
+
+Or via CLI with ``--use-numpy``.
+
+Algorithms
+----------
+
+- **Constant Volume**: *Least Loaded Fit Decreasing* — items sorted by
+  weight (descending), each placed in the emptiest bin that fits.
+- **Constant Bin Number**: *Longest Processing Time (LPT)* — items
+  sorted by weight (descending), each placed in the bin with lowest
+  total weight.
+
+See ``examples_and_resources/efficiency_analyses/`` for benchmarks and
+analysis.
+
+Related packages
+----------------
+
+- `prtpy <https://github.com/erelsgl/prtpy>`__ by Erel Segal-Halevi.
+- `numberpartitioning <https://github.com/fuglede/numberpartitioning>`__
+  by Søren Fuglede Jørgensen.
