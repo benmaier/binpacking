@@ -78,14 +78,38 @@ def save_csvs(
     header: list[str] | None,
     delim: str = ',',
     quotechar: str = '"',
+    output_dir: str | None = None,
 ) -> None:
-    """Save bins to separate CSV files."""
-    filename, file_extension = os.path.splitext(filepath)
+    """Save bins to separate CSV files.
+
+    Parameters
+    ----------
+    bins : list
+        List of bins, each containing rows to save.
+    filepath : str
+        Original input filepath (used for naming output files).
+    header : list or None
+        Header row to write, or None.
+    delim : str
+        CSV delimiter.
+    quotechar : str
+        CSV quote character.
+    output_dir : str or None
+        Directory to write output files. If None, uses current working directory.
+    """
+    # Get just the filename without directory
+    basename = os.path.basename(filepath)
+    filename, file_extension = os.path.splitext(basename)
+
+    # Determine output directory (default: current working directory)
+    if output_dir is None:
+        output_dir = os.getcwd()
 
     formatstr = "%0" + str(len(str(len(bins)))) + "d"
 
     for ib, b in enumerate(bins):
-        current_path = filename + "_" + formatstr % ib + file_extension
+        output_filename = filename + "_" + formatstr % ib + file_extension
+        current_path = os.path.join(output_dir, output_filename)
         with open(current_path, "w") as csvfile:
             writer = csv.writer(csvfile, delimiter=delim, quotechar=quotechar, quoting=csv.QUOTE_MINIMAL)
             if header is not None:

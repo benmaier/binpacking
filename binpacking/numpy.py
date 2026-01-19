@@ -354,6 +354,7 @@ def csv_to_constant_volume(
     quotechar: str = '"',
     lower_bound: float | None = None,
     upper_bound: float | None = None,
+    output_dir: str | None = None,
 ) -> None:
     """Load a CSV file, bin-pack rows by weight column, write output CSVs.
 
@@ -383,6 +384,7 @@ def csv_to_constant_volume(
         header,
         delim=delim,
         quotechar=quotechar,
+        output_dir=output_dir,
     )
 
 
@@ -395,6 +397,7 @@ def csv_to_constant_bin_number(
     quotechar: str = '"',
     lower_bound: float | None = None,
     upper_bound: float | None = None,
+    output_dir: str | None = None,
 ) -> None:
     """Load a CSV file, bin-pack rows to N bins, write output CSVs.
 
@@ -424,6 +427,7 @@ def csv_to_constant_bin_number(
         header,
         delim=delim,
         quotechar=quotechar,
+        output_dir=output_dir,
     )
 
 

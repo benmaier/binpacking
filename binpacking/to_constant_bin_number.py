@@ -19,6 +19,7 @@ def csv_to_constant_bin_number(
     quotechar: str = '"',
     lower_bound: float | None = None,
     upper_bound: float | None = None,
+    output_dir: str | None = None,
 ) -> None:
     """Load a CSV file, bin-pack rows to N bins, write output CSVs."""
     data, weight_column, header = load_csv(
@@ -44,6 +45,7 @@ def csv_to_constant_bin_number(
         header,
         delim=delim,
         quotechar=quotechar,
+        output_dir=output_dir,
     )
 
 

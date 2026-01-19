@@ -73,6 +73,12 @@ def main() -> None:
         default=False,
         help="use NumPy-accelerated algorithms (requires numpy to be installed)",
     )
+    parser.add_argument(
+        "-o", "--output-dir",
+        dest="output_dir",
+        default=None,
+        help="directory to write output files (default: current working directory)",
+    )
 
     args = parser.parse_args()
     opt = vars(args)

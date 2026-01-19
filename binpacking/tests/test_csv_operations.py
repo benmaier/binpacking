@@ -116,17 +116,19 @@ class TestSaveCsvs:
             [['carrot', 8.0, 'vegetable']],
         ]
         header = ['name', 'count', 'category']
+        output_dir = os.path.dirname(temp_csv_file)
 
-        save_csvs(bins, temp_csv_file, header)
+        save_csvs(bins, temp_csv_file, header, output_dir=output_dir)
 
         # Check files were created
-        base, ext = os.path.splitext(temp_csv_file)
-        assert os.path.exists(f"{base}_0{ext}")
-        assert os.path.exists(f"{base}_1{ext}")
+        basename = os.path.basename(temp_csv_file)
+        base, ext = os.path.splitext(basename)
+        assert os.path.exists(os.path.join(output_dir, f"{base}_0{ext}"))
+        assert os.path.exists(os.path.join(output_dir, f"{base}_1{ext}"))
 
         # Cleanup
-        os.unlink(f"{base}_0{ext}")
-        os.unlink(f"{base}_1{ext}")
+        os.unlink(os.path.join(output_dir, f"{base}_0{ext}"))
+        os.unlink(os.path.join(output_dir, f"{base}_1{ext}"))
 
     def test_save_content(self, temp_csv_file):
         """Verify saved content is correct."""
@@ -134,11 +136,13 @@ class TestSaveCsvs:
             [['apple', 10.0, 'fruit']],
         ]
         header = ['name', 'count', 'category']
+        output_dir = os.path.dirname(temp_csv_file)
 
-        save_csvs(bins, temp_csv_file, header)
+        save_csvs(bins, temp_csv_file, header, output_dir=output_dir)
 
-        base, ext = os.path.splitext(temp_csv_file)
-        output_file = f"{base}_0{ext}"
+        basename = os.path.basename(temp_csv_file)
+        base, ext = os.path.splitext(basename)
+        output_file = os.path.join(output_dir, f"{base}_0{ext}")
 
         with open(output_file, 'r') as f:
             lines = f.readlines()
@@ -153,11 +157,13 @@ class TestSaveCsvs:
         bins = [
             [['apple', 10.0, 'fruit']],
         ]
+        output_dir = os.path.dirname(temp_csv_file)
 
-        save_csvs(bins, temp_csv_file, header=None)
+        save_csvs(bins, temp_csv_file, header=None, output_dir=output_dir)
 
-        base, ext = os.path.splitext(temp_csv_file)
-        output_file = f"{base}_0{ext}"
+        basename = os.path.basename(temp_csv_file)
+        base, ext = os.path.splitext(basename)
+        output_file = os.path.join(output_dir, f"{base}_0{ext}")
 
         with open(output_file, 'r') as f:
             lines = f.readlines()
@@ -172,17 +178,19 @@ class TestSaveCsvs:
         """Test correct file numbering for multiple bins."""
         bins = [[[f'item{i}', float(i), 'cat']] for i in range(12)]
         header = ['name', 'count', 'category']
+        output_dir = os.path.dirname(temp_csv_file)
 
-        save_csvs(bins, temp_csv_file, header)
+        save_csvs(bins, temp_csv_file, header, output_dir=output_dir)
 
-        base, ext = os.path.splitext(temp_csv_file)
+        basename = os.path.basename(temp_csv_file)
+        base, ext = os.path.splitext(basename)
         # Should use 2-digit formatting for 12 bins
-        assert os.path.exists(f"{base}_00{ext}")
-        assert os.path.exists(f"{base}_11{ext}")
+        assert os.path.exists(os.path.join(output_dir, f"{base}_00{ext}"))
+        assert os.path.exists(os.path.join(output_dir, f"{base}_11{ext}"))
 
         # Cleanup
         for i in range(12):
-            os.unlink(f"{base}_{i:02d}{ext}")
+            os.unlink(os.path.join(output_dir, f"{base}_{i:02d}{ext}"))
 
 
 class TestPrintBinsizes:
