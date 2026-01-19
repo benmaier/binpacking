@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Python package providing greedy algorithms for two bin packing problems:
-1. **Constant bin number**: Distribute items to exactly N bins with approximately equal total weight per bin
-2. **Constant volume**: Distribute items to minimum number of bins, each with a maximum volume V
+A Python 3.10+ package providing greedy algorithms for two bin packing problems:
+1. **Constant bin number**: Distribute items to exactly N bins with approximately equal total weight per bin (LPT algorithm)
+2. **Constant volume**: Distribute items to minimum number of bins, each with a maximum volume V (Least Loaded Fit Decreasing)
 
 ## Development Environment
 
@@ -22,24 +22,32 @@ source .venv/bin/activate
 # Install in development mode
 pip install -e .
 
+# Install with numpy acceleration
+pip install -e ".[numpy]"
+
+# Install dev dependencies
+pip install -e ".[dev]"
+
 # Run all tests
 pytest
 
 # Run a single test file
-pytest binpacking/tests/constant_volume.py
-pytest binpacking/tests/constant_bin_number.py
+pytest binpacking/tests/test_constant_volume.py
+pytest binpacking/tests/test_constant_bin_number.py
 
-# Run a specific test
-pytest binpacking/tests/constant_volume.py::test_exact_fit
+# Run with coverage
+pytest --cov=binpacking/
 ```
 
 ## Code Architecture
 
 ### Core Algorithms (`binpacking/`)
 
-- `to_constant_bin_number.py`: Greedy algorithm that distributes items to a fixed number of bins, keeping weight sums balanced. Places each item (sorted by weight descending) into the bin with the lowest current weight sum.
+- `to_constant_bin_number.py`: **LPT (Longest Processing Time)** algorithm. Sorts items by weight (descending), places each in the bin with lowest current weight sum.
 
-- `to_constant_volume.py`: Greedy first-fit decreasing algorithm that places items into bins with fixed maximum capacity, minimizing the number of bins needed.
+- `to_constant_volume.py`: **Least Loaded Fit Decreasing** algorithm. Sorts items by weight (descending), places each in the emptiest bin where it fits.
+
+- `numpy.py`: NumPy-accelerated versions of both algorithms for large datasets. Same API, better performance.
 
 Both algorithms accept:
 - Plain lists of weights
@@ -55,13 +63,31 @@ The algorithms preserve the original data structure in output:
 
 ### CLI Tool
 
-`binpacking_binary.py` provides the `binpacking` command for processing CSV files. Use `-V` for constant volume or `-N` for constant bin number (mutually exclusive).
+`binpacking_binary.py` provides the `binpacking` command for processing CSV files:
+- Use `-V` for constant volume or `-N` for constant bin number (mutually exclusive)
+- Use `--use-numpy` for NumPy acceleration
+- Use `-o` / `--output-dir` to specify output directory (default: cwd)
 
 ### Utilities (`utilities.py`)
 
-Helper functions for CSV I/O and list operations (`argmin`, `argmax`, `revargsort`, `get`).
+Helper functions for CSV I/O (`load_csv`, `save_csvs`, `print_binsizes`) and list operations (`argmin`, `argmax`, `revargsort`, `get`).
 
 ## Code Style
 
-- Max line length: 120 characters (see setup.cfg)
-- Python 2/3 compatible (uses `__future__` imports and `builtins`)
+- Python 3.10+ with modern type annotations (`list[T]`, `X | Y`)
+- Max line length: 120 characters (see pyproject.toml)
+- Uses `@overload` decorators for polymorphic function signatures
+
+## Testing
+
+126 tests with 95% coverage. Tests are in `binpacking/tests/`:
+- `test_constant_volume.py` - constant volume algorithm
+- `test_constant_bin_number.py` - constant bin number algorithm
+- `test_numpy.py` - NumPy-accelerated versions
+- `test_csv_operations.py` - CSV loading/saving
+- `test_cli.py` - CLI interface
+- `test_utilities.py` - utility functions
+
+## Algorithm Analysis
+
+See `examples_and_resources/efficiency_analyses/` for benchmarks comparing algorithm variants and justification for the chosen algorithms.
