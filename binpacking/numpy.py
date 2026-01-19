@@ -155,9 +155,9 @@ def to_constant_volume(
 
         # if there are candidates where it fits
         if len(candidate_bins) > 0:
-            # find the fullest bin where this item fits and assign it
+            # find the emptiest bin where this item fits (Least Loaded Fit)
             candidate_weights = [weight_sum[i] for i in candidate_bins]
-            candidate_index = int(np.argmax(candidate_weights))
+            candidate_index = int(np.argmin(candidate_weights))
             b = candidate_bins[candidate_index]
 
         # if this weight doesn't fit in any existent bin
@@ -312,17 +312,11 @@ def to_constant_bin_number(
     if isdict:
         keys = keys[valid_ndcs]
 
-    # the total volume is the sum of all weights
-    V_total = float(np.sum(weights))
-
-    # the first estimate of the maximum bin volume is
-    # the total volume divided to all bins
-    V_bin_max = V_total / float(N_bin)
-
     # prepare array containing the current weight of the bins
     weight_sum = np.zeros(N_bin)
 
     # iterate through the weight list, starting with heaviest
+    # Pure LPT: always place in the bin with lowest weight sum
     for item, weight in enumerate(weights):
 
         if isdict:
@@ -331,29 +325,14 @@ def to_constant_bin_number(
         # put next value in bin with lowest weight sum
         b = int(np.argmin(weight_sum))
 
-        # calculate new weight of this bin
-        new_weight_sum = weight_sum[b] + weight
+        # place the item
+        if isdict:
+            bins[b][key] = weight
+        else:
+            bins[b].append(float(weight))
 
-        found_bin = False
-        while not found_bin:
-
-            # if this weight fits in the bin
-            if new_weight_sum <= V_bin_max:
-
-                # ...put it in
-                if isdict:
-                    bins[b][key] = weight
-                else:
-                    bins[b].append(float(weight))
-
-                # increase weight sum of the bin and continue with next item
-                weight_sum[b] = new_weight_sum
-                found_bin = True
-
-            else:
-                # if not, increase the max volume by the sum of
-                # the rest of the bins per bin
-                V_bin_max += float(np.sum(weights[item:])) / float(N_bin)
+        # update weight sum of the bin
+        weight_sum[b] += weight
 
     if not is_tuple_list:
         return bins

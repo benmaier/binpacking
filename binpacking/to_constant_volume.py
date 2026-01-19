@@ -5,7 +5,7 @@ from binpacking.utilities import (
     save_csvs,
     print_binsizes,
     get,
-    argmax,
+    argmin,
     revargsort,
 )
 
@@ -197,8 +197,8 @@ def to_constant_volume(
 
         # if there are candidates where it fits
         if len(candidate_bins) > 0:
-            # find the fullest bin where this item fits and assign it
-            candidate_index = argmax(get(weight_sum, candidate_bins))
+            # find the emptiest bin where this item fits (Least Loaded Fit)
+            candidate_index = argmin(get(weight_sum, candidate_bins))
             b = candidate_bins[candidate_index]
 
         # if this weight doesn't fit in any existent bin

@@ -40,18 +40,20 @@ class TestBasicFunctionality:
         for b in bins:
             assert sum(b) <= 10
 
-    def test_greedy_first_fit_decreasing(self):
-        """Verify items are placed in decreasing order."""
+    def test_greedy_least_loaded_fit(self):
+        """Verify Least Loaded Fit produces balanced bins."""
         values = [1, 5, 3, 2, 4]
         bins = to_constant_volume(values, 6)
         # After sorting: [5, 4, 3, 2, 1]
+        # Least Loaded Fit places each item in the emptiest bin that fits
         # 5 -> bin 0 (sum=5)
-        # 4 -> bin 1 (sum=4) - doesn't fit in bin 0 (5+4=9>6)
-        # 3 -> bin 1 (sum=7>6) - doesn't fit, needs new bin 2
-        # Actually: 3 doesn't fit in bin 0 (5+3=8>6) or bin 1 (4+3=7>6)
-        # This depends on the algorithm - FFD places in fullest bin that fits
+        # 4 -> bin 1 (sum=4) - bin 1 is emptiest
+        # 3 -> bin 2 (sum=3) - bin 2 is emptiest
+        # 2 -> bin 2 (sum=5) - bin 2 is emptiest that fits
+        # 1 -> bin 1 (sum=5) - bin 1 is emptiest that fits
+        # Result: perfectly balanced bins with sums [5, 5, 5]
         assert all(sum(b) <= 6 for b in bins)
-        assert bins == [[5,1],[4,2],[3]]
+        assert bins == [[5], [4, 1], [3, 2]]
 
 
 
@@ -137,16 +139,14 @@ class TestBounds:
         V_max = 11
 
         # upper_bound=11 includes items with weight <= 11 (inclusive)
+        # Least Loaded Fit spreads items evenly across bins
         bins = to_constant_volume(c, V_max, weight_pos=1, upper_bound=11)
         bins = [sorted(_bin, key=lambda x: x[0]) for _bin in bins]
         assert bins == [
             [('c', 11)],
-            [('a', 10, 'foo'), ('d', 1, 'bar')],
+            [('a', 10, 'foo')],
             [('b', 10, 'log')],
-            [
-                ('e', 2, 'bommel'),
-                ('f', 7, 'floggo'),
-            ],
+            [('d', 1, 'bar'), ('e', 2, 'bommel'), ('f', 7, 'floggo')],
         ]
 
         # lower_bound=1 includes items with weight >= 1 (inclusive)
@@ -154,12 +154,9 @@ class TestBounds:
         bins = [sorted(_bin, key=lambda x: x[0]) for _bin in bins]
         assert bins == [
             [('c', 11)],
-            [('a', 10, 'foo'), ('d', 1, 'bar')],
+            [('a', 10, 'foo')],
             [('b', 10, 'log')],
-            [
-                ('e', 2, 'bommel'),
-                ('f', 7, 'floggo'),
-            ],
+            [('d', 1, 'bar'), ('e', 2, 'bommel'), ('f', 7, 'floggo')],
         ]
 
         # Both bounds (inclusive on both ends)
@@ -167,12 +164,9 @@ class TestBounds:
         bins = [sorted(_bin, key=lambda x: x[0]) for _bin in bins]
         assert bins == [
             [('c', 11)],
-            [('a', 10, 'foo'), ('d', 1, 'bar')],
+            [('a', 10, 'foo')],
             [('b', 10, 'log')],
-            [
-                ('e', 2, 'bommel'),
-                ('f', 7, 'floggo'),
-            ],
+            [('d', 1, 'bar'), ('e', 2, 'bommel'), ('f', 7, 'floggo')],
         ]
 
     def test_lower_bound_only(self):
