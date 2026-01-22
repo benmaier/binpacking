@@ -1,6 +1,8 @@
 import csv
 import os
-from typing import Any, Sequence
+from typing import Any, Sequence, TypeVar
+
+T = TypeVar('T')
 
 
 def load_csv(
@@ -118,7 +120,7 @@ def save_csvs(
                 writer.writerow(row)
 
 
-def get[T](lst: Sequence[T], ndx: Sequence[int]) -> list[T]:
+def get(lst: Sequence[T], ndx: Sequence[int]) -> list[T]:
     """Get elements from list at specified indices."""
     return [lst[n] for n in ndx]
 
