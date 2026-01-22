@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binpacking"
-version = "2.0.0"
+version = "2.0.1"
 description = "Heuristic distribution of weighted items to bins (either a fixed number of bins or a fixed number of volume per bin). Data may be in form of list, dictionary, list of tuples or csv-file."
 readme = "README.rst"
 license = {text = "MIT"}
